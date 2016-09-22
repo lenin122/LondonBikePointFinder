@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BikePoint finder in London</title>
+    <script src='https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyD3JCcglFJ6h9tFJb4ilP1a4-tTCA02qpM'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="/scripts/bikepoints.js"></script>
+    <script src="/scripts/jquery.tablesorter.js"></script>
+    <link rel="stylesheet" type="text/css" href="MainForm.css" />
+</head>
+<body>
+    <div class="modal"><!-- Place at bottom of page --></div>
+    <div id="up_part">
+        <div id="header_div">
+            <h2>Simple Bike finder in London</h2>
+        </div>
+        <div id="up_part_help">
+            <p>
+                There is a map in left part of Screen. You can make a double click in it, and get nearest bike stops.
+                Also, make attention on color of point you are choosing: the greener it is, more bikes is there, redder it is, more free docks.
+            </p>
+            <p>
+                Here you can set radius in metres of your search point:<input id="RadiusInput" type="number" min="1" value="2500" />
+                &nbsp&nbsp&nbsp&nbsp<input id="ClearMarkersButton" type="button" value="Clear markers" />
+                <input id="GetAllMarkers" type="button" value="Get all bike points" />
+            </p>
+        </div>
+    </div>
+    <div id="container" style="overflow: hidden;">
+        <div id="to_show" style="white-space:nowrap;">
+            <div id="left_part">
+                <div id="gmap_canvas">
+                </div>
+                <p>
+                    I will show you TOP <input id="TopPointsInput" type="number" min="1" value="5" /> displayed in radius search BikePoints.
+                </p>
+                <div id="top_table_div">
+                </div>
+            </div>
+            <div id="foundedBikePointsTableDiv">
+                <table id="foundedBikePointsTable" class="tablesorter">
+                    <thead>
+                        <tr>
+                            <th style="width:50%;">BikePoint Name</th>
+                            <th style="width:25%;">Free bikes</th>
+                            <th style="width:25%;">Free docks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
