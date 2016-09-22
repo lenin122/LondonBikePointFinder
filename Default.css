@@ -1,0 +1,103 @@
+﻿body {
+    background-color:rgba( 250, 250, 250, .8 )
+}
+div#gmap_canvas{
+    width:100%;
+}
+div#left_part{
+    width:60%;
+    display:inline-block;
+}
+
+foundedBikePointsTableDiv{
+     width:40%;
+    display:inline-block;
+}
+
+div#foundedBikePointsTableDiv{
+    display:inline-block;
+    vertical-align:top;
+    width: 35%;
+}
+
+div#top_table_div{
+
+}
+
+div#header_div{
+    display:block;
+    text-align:center;
+}
+
+
+div#up_part_help{
+    display:block;
+    text-align:justify;
+}
+
+h2{
+
+}
+
+/*gif locker*/
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 240, 240, 220, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+body.loading {
+    overflow: hidden;   
+}
+
+body.loading .modal {
+    display: block;
+}
+
+/*tableselector css*/
+table.tablesorter {
+	font-size: 12px;
+	background-color:rgba( 250, 250, 250, .8 );
+	width:100%;
+	border: 1px solid #000;
+}
+table.tablesorter th {
+	text-align: left;
+	background-color: rgba(169, 180, 170, 0.80);
+}
+table.tablesorter td {
+	color: black;
+}
+table.tablesorter .even {
+	background-color: #3D3D3D;
+}
+table.tablesorter .odd {
+	background-color: #6E6E6E;
+}
+table.tablesorter .header {
+	background-image: url(img/bg.png);
+	background-repeat: no-repeat;
+	border-left: 1px solid #FFF;
+	border-right: 1px solid #000;
+	border-top: 1px solid #FFF;
+    padding-left: 30px;
+	padding-top: 8px;
+	height: auto;
+    width: 90%;
+}
+table.tablesorter .headerSortUp {
+	background-image: url(img/asc.png);
+	background-repeat: no-repeat;
+}
+table.tablesorter .headerSortDown {
+	background-image: url(img/desc.png);
+	background-repeat: no-repeat;
+}
