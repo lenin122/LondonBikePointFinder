@@ -82,9 +82,8 @@ public class LondonBikePointFinderService : System.Web.Services.WebService
            return JsonConvert.SerializeObject(ex, Formatting.None);
         }
 
-        
     }
-
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     [WebMethod(Description = "Returns json string with bike points in request radius around request lat/lng")]
     public async Task<string> GetPointsWithRadius(double lat, double lon, double radius)
     {
@@ -97,16 +96,16 @@ public class LondonBikePointFinderService : System.Web.Services.WebService
             radius);
 
         var httpClient = new HttpClient();
-        var httpmessage = await httpClient.GetAsync(url);
+        var httpmessage = await httpClient.GetAsync(url).ConfigureAwait(continueOnCapturedContext:false);
         httpmessage.EnsureSuccessStatusCode();
-        var response = await httpmessage.Content.ReadAsStringAsync();
+        answer.Append(await httpmessage.Content.ReadAsStringAsync());
         //get answer, and then  link list to answer.list
-        var pm = JsonConvert.DeserializeObject(answer.ToString(), typeof(PropertyAnswerModel));
+        var answerDeserialized = JsonConvert.DeserializeObject(answer.ToString(), typeof(PropertyAnswerModel));
         //count++ in sql for all points in bikePoints_list
-        IncrementPoints(((PropertyAnswerModel)pm).places);
+        IncrementPoints(((PropertyAnswerModel)answerDeserialized).places);
         //return jsonstring to show this points
         answer.Clear();
-        answer.Append(JsonConvert.SerializeObject(((PropertyAnswerModel)pm).places, Formatting.None));
+        answer.Append(JsonConvert.SerializeObject(((PropertyAnswerModel)answerDeserialized).places, Formatting.None));
         return answer.ToString();
     }
 

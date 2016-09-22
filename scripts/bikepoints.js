@@ -128,7 +128,8 @@
                 console.log(this.commonName + " locked or not onstalled");
             }
         });
-        if (Bounds.isEmpty() == false) {
+        if (Bounds.isEmpty() === false) {
+            Bounds.extend(dblClkMarker.getPosition());
             map.setCenter(Bounds.getCenter(), map.fitBounds(Bounds));
             tableData += "</tbody></table>"
             $("#foundedBikePointsTableDiv").html(tableData);
@@ -171,7 +172,7 @@
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function onSuccessRefreshGet(response, status) {
-                    var objs = $.parseJSON(response.d);
+                    var objs = $.parseJSON(response.d.Result);
                     if (objs.length > 0) {
                         PaintMarkers(objs);
                         refreshTopPoints();
