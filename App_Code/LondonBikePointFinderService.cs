@@ -24,37 +24,48 @@ public class LondonBikePointFinderService : System.Web.Services.WebService
 {
     private const string ConnectionStringName = "LONDONBASE";
 
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json, UseHttpGet = true)]
+    [WebMethod(Description = "Test web method")]
+    public string Test()
+    {
+        return "test";
+    }
+
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     [WebMethod(Description = "Refreshing top viewed BikePoints in radius search")]
     public string RefreshTopPoints(int topValue)
     {
-        using (var sqlConnection = new SqlConnection(WebConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString))
+        using (
+            var sqlConnection =
+                new SqlConnection(WebConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString))
         {
-            if (sqlConnection.State == System.Data.ConnectionState.Closed)
-                sqlConnection.Open();
-            var sqlCommand = new SqlCommand(@"
+            {
+                if (sqlConnection.State == System.Data.ConnectionState.Closed)
+                    sqlConnection.Open();
+                var sqlCommand = new SqlCommand(@"
                                             SELECT TOP (@top_value)
                                                 [commonName],[counter] 
                                             FROM
                                                 [LONDONBASE].[dbo].[BIKEPOINTS]
                                             ORDER BY counter desc", sqlConnection);
-            sqlCommand.Parameters.Add("@top_value", SqlDbType.SmallInt).Value = topValue.ToString();
-            var resultSB = new StringBuilder();
+                sqlCommand.Parameters.Add("@top_value", SqlDbType.SmallInt).Value = topValue.ToString();
+                var resultSB = new StringBuilder();
 
-            resultSB.Append(@"<table id='top_table'>");
-            using (var sqlDataReader = sqlCommand.ExecuteReader())
-            {
-                while (sqlDataReader.Read())
+                resultSB.Append(@"<table id='top_table'>");
+                using (var sqlDataReader = sqlCommand.ExecuteReader())
                 {
-                    resultSB.Append(String.Format(@"<tr><td>{0}</td></tr>",
-                        sqlDataReader.GetString(0), sqlDataReader.GetInt32(1).ToString()));
+                    while (sqlDataReader.Read())
+                    {
+                        resultSB.Append(String.Format(@"<tr><td>{0}</td></tr>",
+                            sqlDataReader.GetString(0), sqlDataReader.GetInt32(1).ToString()));
+                    }
                 }
-            }
-            
-            resultSB.Append(@"</table>");
-            return resultSB.ToString();
-        }
 
+                resultSB.Append(@"</table>");
+                return resultSB.ToString();
+            }
+
+        }
     }
 
     [ScriptMethod(ResponseFormat = ResponseFormat.Json, UseHttpGet = true)]
