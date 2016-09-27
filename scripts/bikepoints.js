@@ -1,5 +1,6 @@
 ﻿var bikepointsSC = (function () {
     var map;
+    var searchRadius;
     var dblClkMarker;
     var markers = [];
     var painting = false;
@@ -41,13 +42,18 @@
     }
 
     var RadiusInputKeyDown = function(event) {
-        if (event.which == 13) {
+        if (event.which == 13 && searchRadius != $("#RadiusInput")[0].value) {
+            searchRadius = $("#RadiusInput")[0].value;
             showPointsInRadius(null, dblClkMarker);
         }
     }
 
-    var RadiusInputFocusOut = function() {
-        showPointsInRadius(null, dblClkMarker);
+    var RadiusInputFocusOut = function () {
+        if (searchRadius != $("#RadiusInput")[0].value) {
+            searchRadius = $("#RadiusInput")[0].value;
+            showPointsInRadius(null, dblClkMarker);
+        }
+        
     }
 
     
@@ -56,6 +62,9 @@
         dblClkMarker = new google.maps.Marker({ map: map });
         map.addListener("dblclick", function (event) {
             //TODO:get street info about marker and attach it to foundedBikePointsTable
+            if (searchRadius != $("#RadiusInput")[0].value) {
+                searchRadius = $("#RadiusInput")[0].value;
+            }
             showPointsInRadius(event, dblClkMarker);
         });
     }
@@ -192,20 +201,17 @@
     }
 
     var showPointsInRadius = function (event, marker) {
-        var radius_value = $("#RadiusInput")[0].value;
         if (event != null) {
             marker.setPosition(event.latLng);
         }
-        if (painting === false && radius_value > 1 && marker.getPosition() != null) {
+        if (painting === false && searchRadius > 1 && marker.getPosition() != null) {
             //check radius            
             painting = true;
-            console.log("Painting if: " + painting);
-
             clearMarkers();
             $.ajax({
                 type: 'POST',
                 url: '/LondonBikePointFinderService.asmx/GetPointsByRadius',
-                data: JSON.stringify({ "lat": marker.getPosition().lat(), "lon": marker.getPosition().lng(), "radius": radius_value }),
+                data: JSON.stringify({ "lat": marker.getPosition().lat(), "lon": marker.getPosition().lng(), "radius": searchRadius }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function onSuccessRefreshGet(response, status) {

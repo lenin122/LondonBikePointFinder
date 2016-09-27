@@ -10,49 +10,49 @@
     <link rel="stylesheet" type="text/css" href="Default.css" />
 </head>
 <body>
-    <div class="modal"><!-- Place at bottom of page --></div>
-    <div id="up_part">
-        <div id="header_div">
-            <h2>Simple Bike finder in London</h2>
-        </div>
-        <div id="up_part_help">
-            <p>
-                There is a map in left part of Screen. You can make a double click in it, and get nearest bike stops.
-                Also, make attention on color of point you are choosing: the greener it is, more bikes is there, redder it is, more free docks.
-            </p>
-            <p>
-                Here you can set radius in metres of your search point:<input id="RadiusInput" type="number" min="1" value="2500" />
-                &nbsp&nbsp&nbsp&nbsp<input id="ClearMarkersButton" type="button" value="Clear markers" />
-                <input id="GetAllMarkers" type="button" value="Get all bike points" />
-            </p>
-        </div>
+<div class="modal"><!-- Place at bottom of page --></div>
+<div id="up_part">
+    <div id="header_div">
+        <h2>Simple Bike finder in London</h2>
     </div>
-    <div id="container" style="overflow: hidden;">
-        <div id="to_show" style="white-space:nowrap;">
-            <div id="left_part">
-                <div id="gmap_canvas">
-                </div>
-                <p>
-                    I will show you TOP <input id="TopPointsInput" type="number" min="1" value="5" /> displayed in radius search BikePoints.
-                </p>
-                <div id="top_table_div">
-                </div>
+    <div id="up_part_help">
+        <p>
+            There is a map in left part of Screen. You can make a double click in it, and get nearest bike stops.
+            Also, make attention on color of point you are choosing: the greener it is, more bikes is there, redder it is, more free docks.
+        </p>
+        <p>
+            Here you can set radius in metres of your search point:<input id="RadiusInput" type="number" title="Please, enter Radius to search in, then pree enter or focus out to refresh search" min="1" value="2500"/>
+            &nbsp&nbsp&nbsp&nbsp<input id="ClearMarkersButton" type="button" value="Clear markers"/>
+            <input id="GetAllMarkers" type="button" value="Get all bike points"/>
+        </p>
+    </div>
+</div>
+<div id="container" style="overflow: hidden;">
+    <div id="to_show" style="white-space: nowrap;">
+        <div id="left_part">
+            <div id="gmap_canvas">
             </div>
-            <div id="foundedBikePointsTableDiv">
-                <table id="foundedBikePointsTable" class="tablesorter">
-                    <thead>
-                        <tr>
-                            <th style="width:50%;">BikePoint Name</th>
-                            <th style="width:25%;">Free bikes</th>
-                            <th style="width:25%;">Free docks</th>
-                        </tr>
-                    </thead>
-                    <tbody id="foundedBikePointTableBody">
-                    </tbody>
-                </table>
+            <p>
+                I will show you TOP <input id="TopPointsInput" title="Enter number of points, you want to see" type="number" min="1" value="5"/> displayed in radius search BikePoints.
+            </p>
+            <div id="top_table_div">
             </div>
         </div>
+        <div id="foundedBikePointsTableDiv">
+            <table id="foundedBikePointsTable" class="tablesorter">
+                <thead>
+                <tr>
+                    <th style="width: 50%;">BikePoint Name</th>
+                    <th style="width: 25%;">Free bikes</th>
+                    <th style="width: 25%;">Free docks</th>
+                </tr>
+                </thead>
+                <tbody id="foundedBikePointTableBody">
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 
 </body>
 </html>
