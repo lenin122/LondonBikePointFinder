@@ -10,17 +10,26 @@
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map($('#gmap_canvas')[0], myOptions);
-        $("#gmap_canvas").height(($(window).height() - $("#up_part").height()) * 0.9);
+        //setting 70% of screen height to map and foundedBikePOintsTable
+        var mainHeight = ($(window).height() - $("#up_part").height()) * 0.7;
+        $("#gmap_canvas").height(mainHeight);
+        $("#foundedBikePointsTableDiv").height(mainHeight);
+        //adding sorting duction
         $("#foundedBikePointsTable").tablesorter();
         //add listener for dblclick
         addDblClkListerFunc();
         //init change top points event
         $("#TopPointsInput").change(refreshTopPoints);
-        //init clear all markers button
+        //init clear all markers button action
         $("#ClearMarkersButton").click(clearMarkers);
-        //init show all markers button
-        $("#GetAllMarkers").click(ajaxRequestAllPoints);//getJSonString);
+        //init show all markers button action
+        $("#GetAllMarkers").click(RequestAllBikePoints);
+        //regreshing top points
         refreshTopPoints();
+        //addin on leave and on submit refreshing found BikePoints near the dblCllMarker
+        $("#RadiusInput").focusout(RadiusInputFocusOut);
+        $("#RadiusInput").keydown(RadiusInputKeyDown);
+        //$("#RadiusInput").onsubmit(showPointsInRadius(null, dblClkMarker));
         //set wait gif
         $body = $("body");
 
@@ -31,10 +40,22 @@
         
     }
 
+    var RadiusInputKeyDown = function(event) {
+        if (event.which == 13) {
+            showPointsInRadius(null, dblClkMarker);
+        }
+    }
+
+    var RadiusInputFocusOut = function() {
+        showPointsInRadius(null, dblClkMarker);
+    }
+
+    
+
     var addDblClkListerFunc = function () {
         dblClkMarker = new google.maps.Marker({ map: map });
         map.addListener("dblclick", function (event) {
-            //dblClkMarker.setPosition(event.latLng);
+            //TODO:get street info about marker and attach it to foundedBikePointsTable
             showPointsInRadius(event, dblClkMarker);
         });
     }
@@ -54,7 +75,7 @@
         markers = [];
     }
 
-    var ajaxRequestAllPoints = function () {
+    var ajaxRequestAllBikePoints = function () {
         clearMarkers();
         $.ajax({
             type: 'GET',
@@ -76,8 +97,10 @@
 
     var PaintMarkers = function (data) {
         var Bounds = new google.maps.LatLngBounds();
-        var tableData = "<table id=\"foundedBikePointsTable\" class=\"tablesorter\"><thead><tr><th>BikePoint Name</th>" 
-            +"<th>Free bikes</th><th>Free docks</th></tr></thead><tbody>";
+        //clear table
+        $("#foundedBikePointsTable tbody").empty();
+        var tableData = "";// = "<table id=\"foundedBikePointsTable\" class=\"tablesorter\"><thead><tr><th>BikePoint Name</th>" 
+            //+"<th>Free bikes</th><th>Free docks</th></tr></thead><tbody><div id=\"scrollable\"";
         $.each(data, function () {
             //set marker color
             //greener - have free bikes
@@ -123,16 +146,20 @@
                 tableData += this.additionalProperties[7].value;
                 tableData += "</td>";
                 tableData += "</tr>";
+                $("#foundedBikePointsTable tbody").append(tableData);
+                tableData = "";
             }
             else {
                 console.log(this.commonName + " locked or not onstalled");
             }
         });
         if (Bounds.isEmpty() === false) {
-            Bounds.extend(dblClkMarker.getPosition());
+            if (dblClkMarker.getPosition() != null) {
+                Bounds.extend(dblClkMarker.getPosition());
+            }
             map.setCenter(Bounds.getCenter(), map.fitBounds(Bounds));
-            tableData += "</tbody></table>"
-            $("#foundedBikePointsTableDiv").html(tableData);
+            //tableData += "</tbody></table>"
+            //$("#scrollable").html(tableData);
             $("#foundedBikePointsTable").tablesorter();
         }
     }
@@ -142,12 +169,19 @@
         if (topPointsToShow > 0) {
             $.ajax({
                 type: 'POST',
-                url: '/LondonBikePointFinderService.asmx/RefreshTopPoints',
+                url: '/LondonBikePointFinderService.asmx/GetTopPoints',
                 data: JSON.stringify({ topValue: topPointsToShow }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function onSuccessRefreshGet(response, status) {
-                    $('#top_table_div').html(response.d);
+                    var arr = $.parseJSON(response.d);
+                    var table = "<table>";
+                    $.each(arr,
+                        function(index,value) {
+                            table += "<tr><td>" + value.commonName + "</td></tr>";
+                        });
+                    table += "</table>";
+                    $('#top_table_div').html(table);
                 }
             });
         }
@@ -159,16 +193,19 @@
 
     var showPointsInRadius = function (event, marker) {
         var radius_value = $("#RadiusInput")[0].value;
-        if (painting === false && radius_value > 1) {
+        if (event != null) {
+            marker.setPosition(event.latLng);
+        }
+        if (painting === false && radius_value > 1 && marker.getPosition() != null) {
             //check radius            
             painting = true;
             console.log("Painting if: " + painting);
-            marker.setPosition(event.latLng);
+
             clearMarkers();
             $.ajax({
                 type: 'POST',
-                url: '/LondonBikePointFinderService.asmx/GetPointsWithRadius',
-                data: JSON.stringify({ lat: marker.getPosition().lat(), lon: marker.getPosition().lng(), radius: radius_value }),
+                url: '/LondonBikePointFinderService.asmx/GetPointsByRadius',
+                data: JSON.stringify({ "lat": marker.getPosition().lat(), "lon": marker.getPosition().lng(), "radius": radius_value }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function onSuccessRefreshGet(response, status) {
@@ -193,7 +230,7 @@
 
     }
 
-    var getJSonString = function () {
+    var RequestAllBikePoints = function () {
         var url_get = "https://api.tfl.gov.uk/BikePoint?app_id=57e5756c&app_key=fa0bd9e6338c902e6ef998ff24fd5607"
         $.getJSON(url_get, function (data) {
             PaintMarkers(data);

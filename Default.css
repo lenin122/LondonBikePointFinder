@@ -9,15 +9,17 @@ div#left_part{
     display:inline-block;
 }
 
-foundedBikePointsTableDiv{
+/*div#foundedBikePointsTableDiv{
      width:40%;
     display:inline-block;
-}
+    
+}*/
 
 div#foundedBikePointsTableDiv{
     display:inline-block;
     vertical-align:top;
-    width: 35%;
+    width: 40%;
+    overflow-y:scroll;
 }
 
 div#top_table_div{
